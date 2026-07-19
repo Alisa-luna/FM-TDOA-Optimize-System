@@ -4,7 +4,7 @@ Physics-Guided Self-Supervised TDOA Error Correction Network
 
 *Overview*
 
-PhyTDOA-Net is a lightweight edge-oriented neural correction framework designed to improve the robustness of traditional TDOA localization systems under challenging wireless environments.
+PhyTDOA-Net is a lightweight edge-oriented neural correction framework designed to improve the robustness of traditional TDOA localization systems under challenging wireless environments, **mainly designed for FM radio broadcasting**.
 
 Unlike end-to-end neural localization approaches, PhyTDOA-Net does not replace conventional positioning algorithms. Instead, it learns propagation-induced timing errors and provides adaptive corrections before classical TDOA solving.
 
