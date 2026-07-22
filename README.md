@@ -1,101 +1,62 @@
-## PhyTDOA-Net
+**FM-TDOA定位系统**
 
-Physics-Guided Self-Supervised TDOA Error Correction Network
+我们提出了一种利用现有FM广播信号进行高精度定位的方法。该方法包含两个核心阶段：
 
-*Overview*
+*第一阶段：多频鲁棒粗定位*
 
-PhyTDOA-Net is a lightweight edge-oriented neural correction framework designed to improve the robustness of traditional TDOA localization systems under challenging wireless environments, **mainly designed for FM radio broadcasting**.
+利用每个广播塔同时发射的多个频率（如88/94/101/108 MHz）的到达时间差（TDOA）构建超定方程组。
 
-Unlike end-to-end neural localization approaches, PhyTDOA-Net does not replace conventional positioning algorithms. Instead, it learns propagation-induced timing errors and provides adaptive corrections before classical TDOA solving.
+引入自适应评分机制，根据当前环境自动归一化各频段的测量误差。
 
+通过物理先验抑制受多径或NLOS严重污染的频段。
 
+在预划分的地理网格上快速筛选出最可能的候选区域（Top-K）。
 
+*第二阶段：自标定精定位*
 
-*Motivation*
+在候选区域内，采用带有自适应鲁棒损失函数的全局优化算法，联合估计接收机位置和各个广播塔的未知时钟偏差。
 
-Traditional TDOA localization systems provide accurate positioning under ideal propagation conditions.
+该损失函数能够自动降低异常测量值的权重，无需事先识别NLOS链路。
 
-However, real-world environments introduce:
+整个过程完全自标定，无需依赖基站间的精确时间同步。
 
-* Non-Line-of-Sight (NLOS) propagation
-* Multipath effects
-* Dynamic obstruction
-* Frequency-dependent delay distortion
+*系统优势*
 
-These effects can introduce significant timing bias, causing:
+基础设施零成本：利用城市中已有的FM广播信号，无需部署专用发射机。
 
-* Large positioning deviation
-* Unstable localization
-* Outlier solutions
+抗干扰能力强：即使在严重多径、非视距和基站数据库误差的情况下，仍能稳定工作。
 
-PhyTDOA-Net aims to mitigate these issues by learning propagation error patterns while preserving physical localization principles.
+自适应性：算法能根据实时信号质量自动调整各频段和各基站的置信度。
 
+计算高效：粗定位与精定位相结合的策略，既保证了搜索速度，又确保了定位精度。
 
-*Key Features*
+*适用场景*
 
-Physics-guided Learning
+城市峡谷、室内等GPS信号弱或不可用的环境。
 
-The model incorporates physical consistency constraints instead of relying purely on data-driven fitting.
+物联网设备、智能手机等终端的定位需求。
 
-Benefits:
+紧急情况下的应急定位。
 
-* Better generalization
-* Reduced dependency on labeled data
-* Compatibility with traditional localization algorithms
+*目前已经实现的测试指标*
 
+**仿真1实验条件：30%定位基站坐标被随机替换，射线追踪建筑遮挡，频率相关性NLOS=0.8，平均NLOS干扰 2000ns，3条不同水平多径，时钟偏移3us，只允许使用3个基站（无论是否有效）进行定位，每个基站发射四个频率，搜索范围1000km*1000km,不允许使用频率一致性先验外的其他先验，包括多帧率平滑**
+**定位目标：实现二维定位**
 
-*Self-supervised Error Correction*
+粗定位命中率: 85.0% 
+    PI错误时命中率: 64.9%
 
-The network learns timing correction from measurement consistency without requiring large-scale manually labeled localization datasets.
+精定位误差 (全样本):
+    中位(km)    ：  1.73 km
+    90%(km)     ：  8.99 km
+    失败率(>5km):   18.0%
 
+**仿真2实验条件：无基站定位错误，NLOS=0.5，1us时钟差，NLOS延时均值1000ns，3条多水平多径，搜索范围1000km*1000km,只允许使用3个基站（无论是否有效）进行定位，每个基站发射四个频率，不允许使用频率一致性先验外的其他先验，包括多帧率平滑**
+**定位目标：实现二维定位**
 
-*NLOS Robustness*
+粗定位命中率: 100%
+精定位误差 (全样本):
+    中位(km)    ：  0.54 km
+    90%(km)     ：  1.52 km
+    失败率(>5km):   0.0%
 
-Designed for challenging propagation conditions:
-
-* Urban environments
-* Indoor/outdoor mixed scenarios
-* Dynamic wireless channels
-
-
-*Edge-Oriented Design*
-
-The model is optimized for resource-constrained devices:
-
-* Lightweight architecture
-* Low inference complexity
-* MCU deployment potential
-
-Target platforms:
-
-* ESP32-class devices
-* ARM Cortex-M microcontrollers
-* Edge gateways
-
-*Application Scenarios*
-
-Potential applications include:
-
-* Earthquake early warning sensor networks
-* Wireless emergency communication systems
-* Distributed IoT localization
-* Edge intelligence positioning systems
-* Industrial monitoring networks
-
-
-*Current Status*
-
-Research Prototype
-
-*Current stage*
-
-* Simulation validation
-* NLOS robustness evaluation
-* Generalization testing
-* Edge deployment feasibility analysis
-
-*Future work*
-
-* Hardware deployment
-* Real-world channel measurements
-* Further model compression
